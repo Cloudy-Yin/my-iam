@@ -6,7 +6,6 @@ package authzserver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/marmotedu/errors"
 	"github.com/marmotedu/iam/internal/authzserver/analytics"
@@ -67,7 +66,7 @@ func createAuthzServer(cfg *config.Config) (*authzServer, error) {
 }
 
 func (s *authzServer) PrepareRun() preparedAuthzServer {
-	fmt.Printf("step into prepare run func\n")
+	log.Info("Step into PrepareRun func")
 
 	if err := s.initialize(); err != nil {
 		log.Fatalf("initialize failed: %s", err.Error())
@@ -80,7 +79,7 @@ func (s *authzServer) PrepareRun() preparedAuthzServer {
 
 // Run start to run AuthzServer.
 func (s preparedAuthzServer) Run() error {
-	fmt.Printf("step into run func\n")
+	log.Info("step into Run func\n")
 	stopCh := make(chan struct{})
 
 	// start shutdown managers
@@ -88,7 +87,7 @@ func (s preparedAuthzServer) Run() error {
 		log.Fatalf("start shutdown manager failed: %s", err.Error())
 	}
 
-	fmt.Printf("yinhui ------  test222")
+	log.Info("step into genericAPIServer.Run()\n")
 	//nolint: errcheck
 	go s.genericAPIServer.Run()
 
@@ -151,32 +150,28 @@ func (s *authzServer) buildStorageConfig() *storage.Config {
 }
 
 func (s *authzServer) initialize() error {
-	fmt.Printf("step into initialize func\n")
+	log.Info("step into initialize func\n")
 	ctx, cancel := context.WithCancel(context.Background())
 	s.redisCancelFunc = cancel
 
 	// keep redis connected
-	//go storage.ConnectToRedis(ctx, s.buildStorageConfig())
-	s.initRedisStore()
+	go storage.ConnectToRedis(ctx, s.buildStorageConfig())
 
 	// cron to reload all secrets and policies from iam-apiserver
-	//cacheIns, err := cache.GetCacheInsOr(apiserver.GetAPIServerFactoryOrDie(s.rpcServer, s.clientCA))
 	cacheIns, err := cache.GetCacheInsOr(apiserver.GetAPIServerFactoryOrDie(s.rpcServer, s.clientCA))
 	if err != nil {
-		fmt.Printf("yinhui --------get cache instance failed\n")
 		return errors.Wrap(err, "get cache instance failed")
 	}
 
 	load.NewLoader(ctx, cacheIns).Start()
-
-	fmt.Printf("yinhui ---------\n")
 	// start analytics service
-	// if s.analyticsOptions.Enable {
-	// 	analyticsStore := storage.RedisCluster{KeyPrefix: RedisKeyPrefix}
-	// 	analyticsIns := analytics.NewAnalytics(s.analyticsOptions, &analyticsStore)
-	// 	analyticsIns.Start()
-	// }
+	if s.analyticsOptions.Enable {
+		analyticsStore := storage.RedisCluster{KeyPrefix: RedisKeyPrefix}
+		analyticsIns := analytics.NewAnalytics(s.analyticsOptions, &analyticsStore)
+		analyticsIns.Start()
+	}
 
+	log.Info("step out initialize func\n")
 	return nil
 }
 

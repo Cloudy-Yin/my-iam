@@ -6,6 +6,8 @@
 package authorize
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/marmotedu/component-base/pkg/core"
 	"github.com/marmotedu/errors"
@@ -39,6 +41,7 @@ func (a *AuthzController) Authorize(c *gin.Context) {
 	}
 
 	auth := authorization.NewAuthorizer(authorizer.NewAuthorization(a.store))
+	fmt.Printf(" auth :%s\n", auth)
 	if r.Context == nil {
 		r.Context = ladon.Context{}
 	}

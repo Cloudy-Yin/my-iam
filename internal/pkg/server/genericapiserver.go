@@ -130,7 +130,7 @@ func (s *GenericAPIServer) Run() error {
 
 	}
 
-	// For scalability, use custom HTTP configuration mode here
+	//For scalability, use custom HTTP configuration mode here
 	s.secureServer = &http.Server{
 		Addr:    s.SecureServingInfo.Address(),
 		Handler: s,

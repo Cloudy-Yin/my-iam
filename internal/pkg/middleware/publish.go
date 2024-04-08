@@ -6,6 +6,7 @@ package middleware
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -54,8 +55,10 @@ func notify(ctx context.Context, method string, command load.NotificationCommand
 		message, _ := json.Marshal(load.Notification{Command: command})
 
 		if err := redisStore.Publish(load.RedisPubSubChannel, string(message)); err != nil {
+			fmt.Printf("publish redis message failed, error: %s\n", err.Error())
 			log.L(ctx).Errorw("publish redis message failed", "error", err.Error())
 		}
+		fmt.Printf("publish redis message, method:%s, command: %s\n", method, command)
 		log.L(ctx).Debugw("publish redis message", "method", method, "command", command)
 	default:
 	}

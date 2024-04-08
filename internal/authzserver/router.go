@@ -5,6 +5,9 @@
 package authzserver
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/marmotedu/component-base/pkg/core"
 	"github.com/marmotedu/errors"
@@ -12,7 +15,6 @@ import (
 	"github.com/marmotedu/iam/internal/authzserver/controller/v1/authorize"
 	"github.com/marmotedu/iam/internal/authzserver/load/cache"
 	"github.com/marmotedu/iam/internal/pkg/code"
-	"github.com/marmotedu/iam/pkg/log"
 )
 
 func initRouter(g *gin.Engine) {
@@ -33,7 +35,7 @@ func installController(g *gin.Engine) *gin.Engine {
 	if cacheIns == nil {
 		log.Panicf("get nil cache instance")
 	}
-
+	fmt.Printf("get cache instance: %v\n", cacheIns)
 	apiv1 := g.Group("/v1", auth.AuthFunc())
 	{
 		authzController := authorize.NewAuthzController(cacheIns)

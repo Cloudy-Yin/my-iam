@@ -104,7 +104,7 @@ func connectSingleton(cache bool, config *Config) bool {
 			return true
 		}
 		singlePool.Store(NewRedisClusterPool(cache, config))
-		fmt.Printf("sucess store redis cluster\n")
+		log.Info("Sucess store new redis cluster\n")
 
 		return true
 	}
@@ -138,7 +138,6 @@ func clusterConnectionIsOpen(cluster RedisCluster) bool {
 
 // ConnectToRedis starts a go routine that periodically tries to connect to redis.
 func ConnectToRedis(ctx context.Context, config *Config) {
-	fmt.Printf("step into coonect to redis function\n")
 	tick := time.NewTicker(time.Second)
 	defer tick.Stop()
 	c := []RedisCluster{
@@ -928,6 +927,7 @@ func (r *RedisCluster) Publish(channel, message string) error {
 	}
 	err := r.singleton().Publish(channel, message).Err()
 	if err != nil {
+		fmt.Printf("Error trying to set value: %s", err.Error())
 		log.Errorf("Error trying to set value: %s", err.Error())
 
 		return err
