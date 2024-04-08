@@ -35,7 +35,7 @@ func installController(g *gin.Engine) *gin.Engine {
 	if cacheIns == nil {
 		log.Panicf("get nil cache instance")
 	}
-	fmt.Printf("get cache instance: %v\n", cacheIns)
+	fmt.Printf("Get cache instance: %v\n", cacheIns)
 	apiv1 := g.Group("/v1", auth.AuthFunc())
 	{
 		authzController := authorize.NewAuthzController(cacheIns)

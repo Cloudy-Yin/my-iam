@@ -14,6 +14,7 @@ import (
 	"github.com/ory/ladon"
 
 	"github.com/marmotedu/iam/internal/authzserver/store"
+	"github.com/marmotedu/iam/pkg/log"
 )
 
 // Cache is used to store secrets and policies.
@@ -38,7 +39,6 @@ var (
 
 // GetCacheInsOr return store instance.
 func GetCacheInsOr(cli store.Factory) (*Cache, error) {
-	fmt.Printf("step into getCacheInsOr\n")
 	var err error
 	if cli != nil {
 		var (
@@ -73,7 +73,7 @@ func GetCacheInsOr(cli store.Factory) (*Cache, error) {
 			}
 		})
 	}
-	fmt.Printf("return cachesIns: %v\n", cacheIns)
+	log.Infof("return cachesIns: %v\n", cacheIns)
 	return cacheIns, err
 }
 

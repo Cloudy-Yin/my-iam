@@ -150,7 +150,7 @@ func (s *authzServer) buildStorageConfig() *storage.Config {
 }
 
 func (s *authzServer) initialize() error {
-	log.Info("step into initialize func\n")
+	log.Infof("step into initialize func")
 	ctx, cancel := context.WithCancel(context.Background())
 	s.redisCancelFunc = cancel
 
@@ -171,7 +171,7 @@ func (s *authzServer) initialize() error {
 		analyticsIns.Start()
 	}
 
-	log.Info("step out initialize func\n")
+	log.Info("step out initialize func")
 	return nil
 }
 

@@ -5,7 +5,6 @@
 package apiserver
 
 import (
-	"fmt"
 	"sync"
 
 	pb "github.com/marmotedu/api/proto/apiserver/v1"
@@ -35,25 +34,23 @@ var (
 
 // GetAPIServerFactoryOrDie return cache instance and panics on any error.
 func GetAPIServerFactoryOrDie(address string, clientCA string) store.Factory {
-	fmt.Printf("step into get apiserver factory\n")
 	once.Do(func() {
 		var (
 			err   error
 			conn  *grpc.ClientConn
 			creds credentials.TransportCredentials
 		)
-		fmt.Printf("step into once.Do\n")
+
 		creds, err = credentials.NewClientTLSFromFile(clientCA, "")
 		if err != nil {
 			log.Panicf("credentials.NewClientTLSFromFile err: %v", err)
 		}
-		fmt.Printf("step into grpc dial:%v,%v \n", address, creds)
+		log.Infof("step into grpc dial:%v,%v \n", address, creds)
 		conn, err = grpc.Dial(address, grpc.WithBlock(), grpc.WithTransportCredentials(creds))
 		if err != nil {
 			log.Panicf("Connect to grpc server failed, error: %s", err.Error())
 		}
 
-		fmt.Printf("step out grpc dial \n")
 		apiServerFactory = &datastore{pb.NewCacheClient(conn)}
 		log.Infof("Connected to grpc server, address: %s", address)
 	})
@@ -61,6 +58,6 @@ func GetAPIServerFactoryOrDie(address string, clientCA string) store.Factory {
 	if apiServerFactory == nil {
 		log.Panicf("failed to get apiserver store fatory")
 	}
-	fmt.Printf("apiServerFactory: %v\n", apiServerFactory)
+	log.Infof("Success return apiServerFactory: %v\n", apiServerFactory)
 	return apiServerFactory
 }

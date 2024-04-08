@@ -6,8 +6,6 @@
 package authorize
 
 import (
-	"fmt"
-
 	"github.com/gin-gonic/gin"
 	"github.com/marmotedu/component-base/pkg/core"
 	"github.com/marmotedu/errors"
@@ -16,6 +14,7 @@ import (
 	"github.com/marmotedu/iam/internal/authzserver/authorization"
 	"github.com/marmotedu/iam/internal/authzserver/authorization/authorizer"
 	"github.com/marmotedu/iam/internal/pkg/code"
+	"github.com/marmotedu/iam/pkg/log"
 )
 
 // AuthzController create a authorize handler used to handle authorize request.
@@ -40,8 +39,9 @@ func (a *AuthzController) Authorize(c *gin.Context) {
 		return
 	}
 
+	log.Infof("Get a.store :%s", a.store)
 	auth := authorization.NewAuthorizer(authorizer.NewAuthorization(a.store))
-	fmt.Printf(" auth :%s\n", auth)
+	log.Infof("Get auth :%s", auth)
 	if r.Context == nil {
 		r.Context = ladon.Context{}
 	}

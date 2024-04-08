@@ -5,8 +5,6 @@
 package authzserver
 
 import (
-	"fmt"
-
 	"github.com/marmotedu/iam/internal/authzserver/config"
 )
 
@@ -16,6 +14,6 @@ func Run(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("before run\n")
+
 	return server.PrepareRun().Run()
 }
